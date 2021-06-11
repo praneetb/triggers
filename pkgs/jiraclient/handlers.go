@@ -30,7 +30,7 @@ func ConnectHandler(baseURL string) func(w http.ResponseWriter, r *http.Request)
 		logrus.WithFields(logrus.Fields{
 			"url path": r.URL.Path,
 			"base url": baseURL,
-		}).Info("GET for ConnectHandler URL path")
+		}).Debug("GET for ConnectHandler URL path")
 
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
@@ -57,7 +57,7 @@ func InstallHandler(cfg *jwt.Config, contextFile string) func(w http.ResponseWri
 	return func(w http.ResponseWriter, r *http.Request) {
 		logrus.WithFields(logrus.Fields{
 			"url path": r.URL.Path,
-		}).Info("GET for InstallHandler URL path")
+		}).Debug("GET for InstallHandler URL path")
 
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -97,7 +97,7 @@ func UninstallHandler(cfg *jwt.Config) func(w http.ResponseWriter, r *http.Reque
 	return func(w http.ResponseWriter, r *http.Request) {
 		logrus.WithFields(logrus.Fields{
 			"url path": r.URL.Path,
-		}).Info("GET for UninstallHandler URL path")
+		}).Debug("GET for UninstallHandler URL path")
 
 		w.WriteHeader(http.StatusOK)
 	}
@@ -108,7 +108,7 @@ func EventHandler(cfg *jwt.Config) func(w http.ResponseWriter, r *http.Request) 
 	return func(w http.ResponseWriter, r *http.Request) {
 		logrus.WithFields(logrus.Fields{
 			"url path": r.URL.Path,
-		}).Info("GET for EventHandler URL path")
+		}).Debug("GET for EventHandler URL path")
 
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -120,9 +120,6 @@ func EventHandler(cfg *jwt.Config) func(w http.ResponseWriter, r *http.Request) 
 		var ie IssueEvent
 		json.Unmarshal(body, &ie)
 
-		logrus.Debugf("base url :%v\n", cfg.BaseURL)
-		logrus.Debugf("ISSUE EVENT:%v\n", ie)
-
 		jiraClient, _ := jira.NewClient(cfg.Client(), cfg.BaseURL)
 		issue, _, err := jiraClient.Issue.Get(ie.Issue.Key, nil)
 		if err != nil {
@@ -131,14 +128,7 @@ func EventHandler(cfg *jwt.Config) func(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 
-		logrus.Debug("ISSUE INFO:\n")
-		issueJSON, err := json.MarshalIndent(issue, "", "    ")
-		if err != nil {
-			logrus.Errorf("json marshal failed, error: %v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		logrus.Debug(string(issueJSON))
+		logrus.Infof("%s: Current status: %s\n", ie.Issue.Key, issue.Fields.Status.Name)
 
 		json.NewEncoder(w).Encode([]string{"OK"})
 

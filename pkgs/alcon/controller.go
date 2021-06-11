@@ -31,7 +31,8 @@ func (c *Alcon) Init() error {
 
 	url := viper.GetString("jira.base_url")
 	file := viper.GetString("jira.context_file")
-	client, err := jiraclient.NewJiraClient(url, file)
+	project := viper.GetString("jira.project")
+	client, err := jiraclient.NewJiraClient(url, file, project)
 	if err != nil {
 		logrus.WithError(err).Error("Cannot initialize jira-client")
 		return err

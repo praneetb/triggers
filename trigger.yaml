@@ -7,5 +7,6 @@ server:
 jira:
   enabled: true
   address: https://praneet.atlassian.net
-  base_url: https://c7f6bdc2f862.ngrok.io
+  base_url: https://fea95c1244c6.ngrok.io
   context_file: jira_context.json
+  project: demo
