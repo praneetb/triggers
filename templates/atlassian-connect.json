@@ -1,0 +1,40 @@
+{
+    "key": "jira-golang-praneet-addon",
+    "name": "Go praneet add-on",
+    "description": "Praneet add-on examples in Go",
+    "vendor": {
+         "name": "Praneet Bachheti",
+         "url": "https://github.com/praneetb"
+    },
+    "baseUrl": "{{ .BaseURL }}",
+    "links": {
+         "self": "{{ .BaseURL }}/atlassian-connect.json",
+         "homepage": "{{ .BaseURL }}/atlassian-connect.json"
+    },
+    "authentication": {
+         "type": "jwt"
+    },
+    "lifecycle": {
+         "installed": "/installed",
+         "uninstalled": "/uninstalled"
+    },
+    "scopes": [
+         "READ"
+    ],
+    "modules": {
+         "webhooks": [
+           {
+                "event": "jira:issue_created",
+                "url": "/event"
+           },
+           {
+                "event": "jira:issue_deleted",
+                "url": "/event"
+           },
+           {
+                "event": "jira:issue_updated",
+                "url": "/event"
+           }
+        ]
+    }
+}

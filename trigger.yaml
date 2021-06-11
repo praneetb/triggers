@@ -4,3 +4,8 @@ server:
   log_level: debug
   endpoint: 0.0.0.0:9999
 
+jira:
+  enabled: true
+  address: https://praneet.atlassian.net
+  base_url: https://c7f6bdc2f862.ngrok.io
+  context_file: jira_context.json

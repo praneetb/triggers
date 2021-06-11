@@ -5,13 +5,16 @@ import (
 	"net/http"
 
 	httprouter "github.com/julienschmidt/httprouter"
+	"github.com/praneetb/triggers/pkgs/jiraclient"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // Alcon instance of the alerts controller
 type Alcon struct {
 	RESTServer *http.Server
 	Router     *httprouter.Router
+	JiraClient *jiraclient.JiraClient
 }
 
 // NewAlcon makes instance of alerts controller
@@ -25,7 +28,17 @@ func NewAlcon() (*Alcon, error) {
 
 // Init initializes the alerts controller.
 func (c *Alcon) Init() error {
-	err := InitWebServer(c)
+
+	url := viper.GetString("jira.base_url")
+	file := viper.GetString("jira.context_file")
+	client, err := jiraclient.NewJiraClient(url, file)
+	if err != nil {
+		logrus.WithError(err).Error("Cannot initialize jira-client")
+		return err
+	}
+	c.JiraClient = client
+
+	err = InitWebServer(c)
 	if err != nil {
 		logrus.WithError(err).Error("Cannot initialize web-server")
 		return err
